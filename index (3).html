@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lona AI</title>
+<style>
+:root{--bg:#f8fafd;--sf:#fff;--sb:#f0f4f9;--tx:#1f1f1f;--mu:#64748b;--bd:#e2e8f0;--ac:#1a73e8;--ub:#d3e3fd;--cd:#0f172a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#131314;--sf:#1e1f20;--sb:#1b1c1d;--tx:#e3e3e3;--mu:#9aa0a6;--bd:#333;--ub:#2b3a55}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;display:flex;overflow:hidden}
+button,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+.g{background:linear-gradient(110deg,#2563eb,#8b5cf6 50%,#ec4899);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+aside{width:260px;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:12px;gap:8px;flex-shrink:0}
+@media(max-width:800px){aside{position:fixed;inset:0 auto 0 0;z-index:30;transform:translateX(-100%);transition:.25s;padding-top:calc(12px + env(safe-area-inset-top,0px))}aside.open{transform:none}}
+.nb{padding:11px 14px;border-radius:16px;border:0;background:var(--bd);font-weight:700;text-align:left}
+#hist{flex:1;overflow:auto;display:flex;flex-direction:column;gap:4px}
+.hi{display:flex;justify-content:space-between;gap:6px;padding:9px 11px;border-radius:12px;font-size:13px;cursor:pointer}
+.hi.on{background:var(--ub);font-weight:700}.hi span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hi button{border:0;background:none;opacity:.6}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--bd);background:var(--sf)}
+header h1{margin:0;font-size:20px;font-weight:800}
+.pill{border:1px solid var(--bd);background:var(--bg);border-radius:12px;padding:5px 9px;font-size:12px;font-weight:700}
+.pill.on{background:#7c3aed;color:#fff;border-color:#7c3aed}
+#menu{display:none}@media(max-width:800px){#menu{display:inline-block}}
+#chat{flex:1;overflow:auto;padding:16px 12px}.wrap{max-width:760px;margin:auto}
+#welcome{text-align:center;padding:24px 0}#welcome h2{font-size:26px;margin:8px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:18px;text-align:left}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:12px;font-size:13px}
+.m{display:flex;margin:12px 0}.m.u{justify-content:flex-end}
+.b{max-width:88%;padding:10px 14px;border-radius:18px;line-height:1.6;white-space:pre-wrap;word-break:break-word;font-size:15px}
+.u .b{background:var(--ub)}.a .b{background:var(--sf);border:1px solid var(--bd)}
+.b img{max-width:100%;border-radius:12px;display:block;margin-top:6px}
+.b pre{background:var(--cd);color:#f8fafc;padding:10px;border-radius:12px;overflow:auto;white-space:pre;font-size:13px}
+.b code{background:rgba(127,127,127,.2);padding:1px 5px;border-radius:5px;font-size:.88em}.b pre code{background:none;padding:0}
+.act{margin-top:6px;display:flex;gap:6px}.act button{border:0;background:var(--bg);border-radius:8px;padding:3px 8px;font-size:12px}
+footer{padding:8px 12px 10px}.box{max-width:760px;margin:auto;background:var(--sf);border:1px solid var(--bd);border-radius:24px;padding:10px}
+textarea{width:100%;border:0;outline:0;background:none;resize:none;max-height:140px;font-size:15px;padding:4px 6px}
+.row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;margin-top:6px}.row div{display:flex;gap:6px;flex-wrap:wrap}
+.send{width:40px;height:40px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:18px}
+.live{background:linear-gradient(90deg,#7c3aed,#db2777);color:#fff;border:0}
+#att{display:none;max-width:760px;margin:0 auto 6px;align-items:center;gap:8px;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:6px}
+#att img{width:44px;height:44px;object-fit:cover;border-radius:8px}
+#lv{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;background:linear-gradient(#0f172a,#1e1b4b);color:#fff}
+.orb{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed,#ec4899);animation:br 2.4s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:38px}
+@keyframes br{50%{transform:scale(1.1);box-shadow:0 0 50px #8b5cf6}}
+#lv.sp .orb{animation-duration:.7s}
+.cap{width:100%;max-width:460px;background:rgba(255,255,255,.1);border-radius:16px;padding:12px;font-size:14px;text-align:left;max-height:34vh;overflow:auto}
+#toast{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:12px;right:12px;z-index:99;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+#toast div{background:#0f172a;color:#fff;padding:9px 14px;border-radius:14px;font-size:13px;font-weight:700}
+.dots span{animation:d 1s infinite;display:inline-block}.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}@keyframes d{50%{opacity:.2}}
+
+#banner{display:none;background:#fef3c7;color:#78350f;padding:6px 12px;font-size:13px;font-weight:700;text-align:center}
+#adm{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:12px}
+.mb{background:var(--sf);border-radius:20px;padding:16px;width:100%;max-width:520px;max-height:92vh;overflow:auto}
+.mb label{display:block;font-size:12px;font-weight:700;margin:9px 0 3px}
+.mb input[type=text],.mb input[type=password],.mb textarea,.mb select{width:100%;border:1px solid var(--bd);border-radius:10px;padding:8px;background:var(--bg)}
+.mb .bt{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.mb small{color:var(--mu);display:block;margin-top:4px}
+.pri{background:var(--ac)!important;color:#fff!important;border-color:var(--ac)!important}
+</style></head><body>
+<div id="toast"></div>
+<aside id="side">
+ <b class="g" id="nm1" style="font-size:20px">Lona AI</b>
+ <button class="nb" id="newc">＋ নতুন চ্যাট</button>
+ <small style="color:var(--mu);font-weight:700">আগের চ্যাট</small>
+ <div id="hist"></div>
+ <button class="nb" id="admbtn">⚙️ অ্যাডমিন প্যানেল</button><small style="color:var(--mu)">লাইভ মোডে বলুন: “পুরুষ কণ্ঠ”, “গভীর ভাবনা চালু করো”, “নতুন চ্যাট”, “…ছবি আঁকো”</small>
+</aside>
+<main><div id="banner"></div>
+<header>
+ <button class="pill" id="menu">☰</button><h1 class="g" id="nm2">Lona AI</h1>
+ <select class="pill" id="lang"><option value="auto">🌐 Auto</option><option value="bn-BD">বাংলা</option><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ar-EG">العربية</option><option value="ur-PK">اردو</option><option value="es-US">Español</option><option value="fr-FR">Français</option><option value="de-DE">Deutsch</option><option value="ja-JP">日本語</option></select>
+ <button class="pill on" id="vf">👩 মহিলা</button><button class="pill" id="vm">👨 পুরুষ</button>
+ <button class="pill" id="vt">🔊 পরীক্ষা</button>
+ <select class="pill" id="spd"><option value=".75">0.75x</option><option value="1" selected>1x</option><option value="1.25">1.25x</option><option value="1.5">1.5x</option></select>
+ <label class="pill"><input type="checkbox" id="ra" checked> পড়ে শোনাও</label>
+</header>
+<div id="chat"><div class="wrap">
+ <section id="welcome">
+  <h2 class="g" id="wt">হ্যালো! আমি লোনা এআই</h2>
+  <div>প্রশ্ন করুন, কোড লিখুন, ছবি দিয়ে জিজ্ঞেস করুন, অথবা লাইভে কথা বলুন।</div>
+  <div class="cards">
+   <button class="card" data-p="HTML ও JavaScript দিয়ে একটি সুন্দর ডিজিটাল ঘড়ির কোড লিখে দাও।">💻 কোড লিখুন<br>ডিজিটাল ঘড়ির কোড</button>
+   <button class="card" data-p="একটি সফল অনলাইন ব্যবসা শুরু করার ৫টি ধাপ গভীরভাবে বিশ্লেষণ করো।" data-d="1">🧠 গভীর ভাবনা<br>অনলাইন ব্যবসার পরিকল্পনা</button>
+   <button class="card" data-p="কাশফুলের বাগান ও নদীর ধারে গোধূলির একটি ছবি আঁকো" data-i="1">🎨 ছবি আঁকুন<br>কাশফুল ও নদীর সূর্যাস্ত</button>
+   <button class="card" id="cardlive">🎙️ লাইভ কথা বলুন<br>সবসময় চালু থাকে, হাত লাগে না</button>
+  </div>
+ </section>
+ <div id="msgs"></div>
+</div></div>
+<footer>
+ <div id="att"><img id="athumb" alt=""><span style="flex:1;font-size:12px" id="aname"></span><button class="pill" id="arm">বাদ দিন</button></div>
+ <div class="box">
+  <textarea id="inp" rows="1" placeholder="লোনা এআই-কে লিখুন…"></textarea>
+  <div class="row">
+   <div><input type="file" id="file" accept="image/*" hidden>
+    <button class="pill" id="addp">🖼️ ছবি</button><button class="pill" id="deep">🧠 গভীর ভাবনা</button><button class="pill" id="draw">🎨 ছবি আঁকুন</button></div>
+   <div><button class="pill" id="mic">🎤</button><button class="pill live" id="live">🎧 লাইভ</button><button class="pill" id="stop" style="display:none">⏹</button><button class="send" id="send">↑</button></div>
+  </div>
+ </div>
+</footer>
+</main>
+<div id="lv">
+ <button class="pill" id="lclose" style="position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px">✕ বন্ধ</button>
+ <div class="orb" id="orb">🎙️</div>
+ <h3 id="lh" style="margin:0">শুনছি… কথা বলুন</h3>
+ <div class="cap"><div>🗣️ <i id="lu">…</i></div><hr style="border-color:rgba(255,255,255,.15)"><div>✨ <span id="la">আমি প্রস্তুত।</span></div></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+  <button class="pill" id="lsend">কথা শেষ / পাঠান</button><button class="pill" id="lint">✋ থামুন</button>
+ </div>
+ <small style="opacity:.7">উত্তরের পর আপনা-আপনি আবার শোনা শুরু করে — বন্ধ না করলে চলতেই থাকবে।</small>
+</div>
+
+<div id="adm"><div class="mb">
+ <div id="admgate"><h3 style="margin:0 0 8px">⚙️ অ্যাডমিন প্যানেল</h3><div id="gtxt" style="font-size:13px"></div>
+  <label>পাসওয়ার্ড</label><input type="password" id="gpw"><div class="bt"><button class="pill pri" id="gobtn">প্রবেশ</button><button class="pill" id="gx">বন্ধ</button></div></div>
+ <div id="admform" style="display:none"><h3 style="margin:0 0 4px">⚙️ অ্যাডমিন প্যানেল</h3>
+  <label>সাইটের নাম</label><input type="text" id="f_name">
+  <label>Gemini API Key</label><input type="password" id="f_key" autocomplete="off">
+  <small>⚠️ Key ফাইলের ভেতরে থাকলে যে কেউ সোর্স দেখে পেতে পারে। Google AI Studio/Cloud-এ Key-তে শুধু আপনার সাইটের ডোমেইন অনুমোদন দিন এবং খরচের সীমা রাখুন।</small>
+  <label>টেক্সট মডেল</label><input type="text" id="f_tm">
+  <label>ছবি মডেল</label><input type="text" id="f_im">
+  <label>ভয়েস (TTS) মডেল</label><input type="text" id="f_tts">
+  <label>সিস্টেম নির্দেশনা (লোনা কেমন আচরণ করবে)</label><textarea id="f_sys" rows="3"></textarea>
+  <label>স্বাগত বার্তা</label><input type="text" id="f_wel">
+  <label>ঘোষণা ব্যানার (খালি রাখলে দেখাবে না)</label><input type="text" id="f_ban">
+  <label>ডিফল্ট কণ্ঠ</label><select id="f_vg"><option value="female">মহিলা</option><option value="male">পুরুষ</option></select>
+  <label><input type="checkbox" id="f_ei"> ছবি আঁকা চালু</label>
+  <label><input type="checkbox" id="f_et"> Gemini ভয়েস (TTS) চালু</label>
+  <label>নতুন অ্যাডমিন পাসওয়ার্ড (বদলাতে চাইলে)</label><input type="password" id="f_pw">
+  <div class="bt"><button class="pill pri" id="f_save">💾 সেভ (এই ব্রাউজারে)</button><button class="pill pri" id="f_dl">📥 পাবলিশের ফাইল ডাউনলোড</button><button class="pill" id="f_close">বন্ধ</button></div>
+  <small>সব ভিজিটর যেন নতুন সেটিং দেখে: “ডাউনলোড” চেপে পাওয়া ফাইলটি আপনার হোস্টিংয়ে আবার আপলোড করুন।</small>
+ </div></div></div>
+<script id="cfg" type="application/json">{"adminHash": "db2f6153ab01150c4fcee337fc9ba88d35f95cbeec7546bbb6a439521f9c0e7a"}</script>
+<script>
+const $=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const D={name:'Lona AI',apiKey:'',textModel:'gemini-3-flash-preview',imageModel:'gemini-3.1-flash-image',ttsModel:'gemini-2.5-flash-preview-tts',systemPrompt:'',welcome:'হ্যালো! আমি লোনা এআই',banner:'',enableImage:true,enableTTS:true,defaultVoice:'female',adminHash:''};
+let CFG={...D};
+try{Object.assign(CFG,JSON.parse($('cfg').textContent||'{}'))}catch(e){}
+try{Object.assign(CFG,JSON.parse(localStorage.getItem('lona_cfg')||'{}'))}catch(e){}
+const S={lang:'auto',gender:CFG.defaultVoice,speed:1,read:true,deep:false,img:null,busy:false,live:false,lid:0,sid:0,chats:[],cur:null,stream:null,ac:null,stopRec:null,sdone:null,audio:null};
+function toast(t){const d=document.createElement('div');d.textContent=t;$('toast').appendChild(d);setTimeout(()=>d.remove(),4200)}
+const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function md(t){const c=[];t=t.replace(/```\w*\n?([\s\S]*?)```/g,(_,x)=>{c.push('<pre><code>'+esc(x.trim())+'</code></pre>');return '\u0001'+(c.length-1)+'\u0001'});
+ t=esc(t).replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>c[i])}
+function applyCfg(){document.title=CFG.name;$('nm1').textContent=CFG.name;$('nm2').textContent=CFG.name;$('wt').textContent=CFG.welcome;
+ const b=$('banner');b.textContent=CFG.banner;b.style.display=CFG.banner?'block':'none'}
+/* storage */
+function load(){try{S.chats=JSON.parse(localStorage.getItem('lona_v4')||'[]')}catch(e){S.chats=[]}
+ if(!S.chats.length)newChat(false);else{S.cur=S.chats[0].id;render()}hist()}
+function save(){const w=()=>localStorage.setItem('lona_v4',JSON.stringify(S.chats.slice(0,40)));
+ try{w()}catch(e){S.chats.forEach(c=>c.m.slice(0,-3).forEach(x=>{delete x.s;delete x.i}));try{w()}catch(e2){}}hist()}
+const chat=()=>S.chats.find(c=>c.id===S.cur);
+function newChat(n=true){const id='c'+Date.now();S.chats.unshift({id,title:'নতুন কথোপকথন',m:[]});S.cur=id;render();save();if(n)toast('নতুন চ্যাট খোলা হয়েছে')}
+function hist(){const h=$('hist');h.innerHTML='';S.chats.forEach(c=>{const r=document.createElement('div');r.className='hi'+(c.id===S.cur?' on':'');
+ r.innerHTML='<span>'+esc(c.title)+'</span><button>🗑</button>';
+ r.onclick=e=>{if(e.target.tagName==='BUTTON'){S.chats=S.chats.filter(x=>x.id!==c.id);if(!S.chats.length)newChat(false);else if(S.cur===c.id){S.cur=S.chats[0].id;render()}save();return}S.cur=c.id;render();hist();$('side').classList.remove('open')};h.appendChild(r)})}
+function bubble(role,text,img,svg){const m=document.createElement('div');m.className='m '+(role==='user'?'u':'a');
+ const b=document.createElement('div');b.className='b';b.innerHTML=md(text||'');
+ [img,svg].forEach(u=>{if(u){const i=document.createElement('img');i.src=u;b.appendChild(i)}});
+ if(role!=='user'){const a=document.createElement('div');a.className='act';a.innerHTML='<button>🔊 শুনুন</button><button>📋 কপি</button>';
+  a.children[0].onclick=()=>speak(text,true);a.children[1].onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(text).then(()=>toast('কপি হয়েছে'),()=>{})};b.appendChild(a)}
+ m.appendChild(b);$('msgs').appendChild(m);$('chat').scrollTop=1e9}
+function post(r,t,i,s){const c=chat();c.m.push({r,t,i,s});if(r==='user'&&c.m.length===1)c.title=(t||'ছবি').slice(0,34);$('welcome').style.display='none';bubble(r,t,i,s);save()}
+function render(){$('msgs').innerHTML='';const c=chat();$('welcome').style.display=c.m.length?'none':'block';c.m.forEach(x=>bubble(x.r,x.t,x.i,x.s))}
+function thinking(){const m=document.createElement('div');m.className='m a';m.innerHTML='<div class="b"><span class="dots"><span>●</span><span>●</span><span>●</span></span></div>';$('msgs').appendChild(m);$('welcome').style.display='none';$('chat').scrollTop=1e9;return m}
+/* Gemini API */
+async function gem(model,body,tries=3){if(!CFG.apiKey)throw new Error('NOKEY');let d=1000;
+ for(let i=0;i<=tries;i++){try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':CFG.apiKey},body:JSON.stringify(body)});
+  if(r.ok)return await r.json();const j=await r.json().catch(()=>({}));
+  if(r.status!==429&&r.status<500){const e=new Error((j.error&&j.error.message)||'HTTP '+r.status);e.fatal=true;throw e}}
+  catch(e){if(e.fatal||i===tries)throw e}await sleep(d);d*=2}throw new Error('সার্ভারে সংযোগ হচ্ছে না')}
+function errText(e){const m=(e&&e.message)||'';if(m==='NOKEY')return'⚠️ এখনো API Key বসানো হয়নি। অ্যাডমিন প্যানেল (⚙️) থেকে Gemini API Key দিন।';return'⚠️ '+(m||'সমস্যা হয়েছে, আবার চেষ্টা করুন।')}
+function histContents(){const h=chat().m.filter(x=>x.t).slice(-10).map(x=>({role:x.r==='user'?'user':'model',parts:[{text:x.t}]}));while(h.length&&h[0].role!=='user')h.shift();return h}
+function sys(){const L=S.lang==='auto'?'Detect the language the user wrote or spoke (Bengali, English, Banglish, Hindi, Arabic, etc.) and reply naturally in that exact language.':'Reply in '+$('lang').selectedOptions[0].text+' unless asked otherwise.';
+ return "You are '"+CFG.name+"' (লোনা এআই), a warm, intelligent, human-like multilingual assistant for chat and voice. "+L+(S.deep?" DEEP THINKING ON: show brief step-by-step reasoning first, then a clear final answer.":" Keep replies concise and natural.")+" Put code in fenced code blocks. "+CFG.systemPrompt}
+const txt=j=>{const p=j&&j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts;const t=p&&p.map(x=>x.text||'').join('');if(!t)throw new Error('এআই থেকে উত্তর পাওয়া যায়নি।');return t};
+async function ask(text,imgUrl,h){const parts=[{text}];if(imgUrl)parts.push({inlineData:{mimeType:'image/jpeg',data:imgUrl.split(',')[1]}});
+ return txt(await gem(CFG.textModel,{contents:[...h,{role:'user',parts}],systemInstruction:{parts:[{text:sys()}]}}))}
+async function askAudio(b64,mime,h){const si=sys()+" You receive the user's voice recording. First transcribe exactly what they said in their spoken language, then reply naturally in that same language. Return ONLY JSON with keys transcript and reply.";
+ const j=await gem(CFG.textModel,{contents:[...h,{role:'user',parts:[{text:'Transcribe my voice message and reply.'},{inlineData:{mimeType:mime,data:b64}}]}],systemInstruction:{parts:[{text:si}]},generationConfig:{responseMimeType:'application/json',responseSchema:{type:'OBJECT',properties:{transcript:{type:'STRING'},reply:{type:'STRING'}},required:['transcript','reply']}}});
+ return JSON.parse(txt(j))}
+async function genImage(p){const j=await gem(CFG.imageModel,{contents:[{role:'user',parts:[{text:'High quality, detailed, vibrant image: '+p}]}],generationConfig:{responseModalities:['IMAGE']}});
+ const pt=j.candidates&&j.candidates[0]&&j.candidates[0].content.parts.find(x=>x.inlineData);if(!pt)throw new Error('ছবি তৈরি হয়নি, অন্যভাবে বর্ণনা দিন।');return 'data:'+(pt.inlineData.mimeType||'image/png')+';base64,'+pt.inlineData.data}
+const imgIntent=t=>/(ছবি আঁকো|ছবি আঁকুন|ছবি এঁকে|ছবি বানাও|ছবি তৈরি)|^(draw|paint|sketch|generate an? image)/i.test(t.trim());
+function voiceCmd(t){const l=t.toLowerCase();
+ if(/মহিলা কণ্ঠ|মেয়ে কণ্ঠ|female voice/.test(l)){setGender('female');return'ঠিক আছে, এখন থেকে মহিলা কণ্ঠে বলব।'}
+ if(/পুরুষ কণ্ঠ|ছেলে কণ্ঠ|male voice/.test(l)){setGender('male');return'নিশ্চয়ই, এখন থেকে পুরুষ কণ্ঠে উত্তর দেব।'}
+ if(/গভীর ভাবনা চালু|deep thinking on/.test(l)){setDeep(true);return'গভীর ভাবনা মোড চালু হয়েছে।'}
+ if(/গভীর ভাবনা বন্ধ|deep thinking off/.test(l)){setDeep(false);return'গভীর ভাবনা মোড বন্ধ করা হয়েছে।'}
+ if(/নতুন চ্যাট|new chat/.test(l)){newChat(false);return'নতুন চ্যাট শুরু হয়েছে। বলুন, কীভাবে সাহায্য করব?'}return null}
+/* voice out */
+function setGender(g,say){S.gender=g;$('vf').classList.toggle('on',g==='female');$('vm').classList.toggle('on',g==='male');if(say)speak(g==='female'?'হ্যালো! আমি লোনা এআই। মহিলা কণ্ঠ চালু।':'হ্যালো! আমি লোনা এআই। পুরুষ কণ্ঠ চালু।',true)}
+function setDeep(v){S.deep=v;$('deep').classList.toggle('on',v)}
+function locOf(t){if(S.lang!=='auto')return S.lang;if(/[\u0980-\u09FF]/.test(t))return'bn-BD';if(/[\u0900-\u097F]/.test(t))return'hi-IN';if(/[\u0600-\u06FF]/.test(t))return'ar-EG';if(/[\u3040-\u30FF\u4E00-\u9FAF]/.test(t))return'ja-JP';return'en-US'}
+function pickVoice(loc){const vs=speechSynthesis.getVoices(),p=loc.split('-')[0];let pool=vs.filter(v=>v.lang.toLowerCase().startsWith(p));if(!pool.length)pool=vs;
+ const f=/female|woman|zira|samantha|victoria|priya|lekha|google/i,m=/\bmale\b|\bman\b|david|daniel|alex|rishi|hemant|prabhat|mark|james/i;
+ return(S.gender==='female'?pool.find(v=>f.test(v.name)):pool.find(v=>m.test(v.name)))||pool[S.gender==='female'?0:pool.length-1]}
+function playWeb(t,id){return new Promise(res=>{if(!('speechSynthesis' in window))return res();
+ const parts=t.match(/[^।.!?\n]+[।.!?]*/g)||[t],ch=[];let cur='';parts.forEach(p=>{if((cur+p).length>170){cur&&ch.push(cur);cur=p}else cur+=p});cur&&ch.push(cur);
+ const loc=locOf(t);let i=0;(function nx(){if(id!==S.sid||i>=ch.length)return res();const u=new SpeechSynthesisUtterance(ch[i++]);const v=pickVoice(loc);if(v)u.voice=v;
+  u.lang=loc;u.rate=S.speed;u.pitch=S.gender==='female'?1.15:.85;u.onend=nx;u.onerror=()=>res();speechSynthesis.speak(u)})()})}
+function wav(pcm,sr){const b=new ArrayBuffer(44+pcm.length*2),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+ w(0,'RIFF');v.setUint32(4,36+pcm.length*2,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,pcm.length*2,true);
+ pcm.forEach((x,i)=>v.setInt16(44+i*2,x,true));return new Blob([b],{type:'audio/wav'})}
+async function playGemini(t,id){const j=await gem(CFG.ttsModel,{contents:[{parts:[{text:(S.gender==='female'?'Say warmly and clearly: ':'Say calmly and clearly: ')+t}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:S.gender==='female'?'Aoede':'Charon'}}}}},1);
+ const d=j.candidates[0].content.parts[0].inlineData;if(!d||!/audio/.test(d.mimeType||''))throw new Error('tts');if(id!==S.sid)return;
+ const sr=+((d.mimeType.match(/rate=(\d+)/)||[])[1]||24000),bin=atob(d.data),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+ const url=URL.createObjectURL(wav(new Int16Array(u.buffer),sr)),a=new Audio(url);a.playbackRate=S.speed;S.audio=a;
+ await new Promise((res,rej)=>{a.onended=res;a.onerror=()=>rej(new Error('audio'));a.play().catch(rej)});URL.revokeObjectURL(url)}
+function speak(raw,force){stopSpeak();if(!(force||S.read))return Promise.resolve();
+ const t=raw.replace(/```[\s\S]*?```/g,' ').replace(/[*#_`>]/g,'').replace(/\s+/g,' ').trim();if(!t)return Promise.resolve();const id=++S.sid;
+ return new Promise(async res=>{const end=()=>{S.sdone=null;$('stop').style.display='none';$('lv').classList.remove('sp');res()};S.sdone=end;$('stop').style.display='';$('lv').classList.add('sp');
+  try{if(CFG.enableTTS&&CFG.apiKey)await playGemini(t.slice(0,600),id);else await playWeb(t,id)}catch(e){if(id===S.sid)await playWeb(t,id)}
+  if(id===S.sid)end()})}
+function stopSpeak(){S.sid++;if(S.audio){try{S.audio.pause()}catch(e){}S.audio=null}try{speechSynthesis.cancel()}catch(e){}const f=S.sdone;S.sdone=null;f&&f()}
+/* mic: works in every browser (MediaRecorder + Gemini understands the audio) */
+function micErr(e){let m='মাইক পাওয়া যায়নি';if(!navigator.mediaDevices)m='মাইকের জন্য পেজটি https লিংকে খুলুন';else if(window.self!==window.top)m='এই পেজ অন্য সাইটের ভেতরে খোলা — সরাসরি লিংকে খুলুন';
+ else if(e&&e.name==='NotAllowedError')m='মাইক ব্লক করা — অ্যাড্রেস বারের 🔒 থেকে Microphone Allow করে রিলোড দিন';toast(m)}
+async function getStream(){if(S.stream&&S.stream.active)return S.stream;try{S.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});return S.stream}catch(e){micErr(e);throw e}}
+function record(){return new Promise(async(res,rej)=>{let st;try{st=await getStream()}catch(e){return rej(e)}
+ const mt=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'].find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||'';
+ const mr=new MediaRecorder(st,mt?{mimeType:mt}:{}),ch=[];const ac=S.ac||(S.ac=new(window.AudioContext||window.webkitAudioContext)());if(ac.state==='suspended')ac.resume();
+ const src=ac.createMediaStreamSource(st),an=ac.createAnalyser();an.fftSize=1024;src.connect(an);const buf=new Uint8Array(an.fftSize);let spoke=false,done=false,last=Date.now();const t0=last;
+ const fin=ok=>{if(done)return;done=true;clearInterval(iv);S.stopRec=null;try{src.disconnect()}catch(e){}
+  mr.onstop=()=>res(ok&&spoke?new Blob(ch,{type:mr.mimeType||mt||'audio/webm'}):null);if(mr.state!=='inactive')mr.stop();else mr.onstop()};
+ S.stopRec=fin;mr.ondataavailable=e=>e.data.size&&ch.push(e.data);mr.start(250);
+ const iv=setInterval(()=>{an.getByteTimeDomainData(buf);let s=0;for(const v of buf){const x=(v-128)/128;s+=x*x}const n=Date.now();if(Math.sqrt(s/buf.length)>0.02){spoke=true;last=n}
+  if(spoke&&n-last>1300||n-t0>60000)fin(true);else if(!spoke&&n-t0>(S.live?20000:10000))fin(false)},80)})}
+const b64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(b)});
+async function voiceTurn(blob){S.busy=true;const th=thinking();let reply=null;
+ try{const j=await askAudio(await b64(blob),(blob.type||'audio/webm').split(';')[0],histContents());const tr=(j.transcript||'').trim();th.remove();if(!tr)return null;
+  $('lu').textContent=tr;const cmd=voiceCmd(tr);reply=cmd||j.reply||'';let pic=null;post('user',tr);
+  if(!cmd&&imgIntent(tr)&&CFG.enableImage){const t2=thinking();try{pic=await genImage(tr);reply='🎨 আপনার জন্য ছবি তৈরি করলাম:'}catch(e){reply=errText(e)}t2.remove()}
+  post('a',reply,null,pic);$('la').textContent=reply.slice(0,300);return reply
+ }catch(e){th.remove();reply=errText(e);post('a',reply);$('la').textContent=reply;if(e.message==='NOKEY'){closeLive();openAdminHint()}return null}
+ finally{S.busy=false}}
+async function micOnce(){if(S.stopRec){S.stopRec(true);return}$('mic').classList.add('on');toast('বলুন… থামলে নিজে পাঠিয়ে দেবে');
+ try{const b=await record();if(b){const r=await voiceTurn(b);if(r&&S.read)speak(r)}}catch(e){}$('mic').classList.remove('on')}
+/* always-on live loop */
+const setLive=(h,i)=>{$('lh').textContent=h;$('orb').textContent=i};
+async function liveLoop(){const my=++S.lid;
+ while(S.live&&my===S.lid){try{setLive('শুনছি… কথা বলুন','🎙️');const b=await record();if(!(S.live&&my===S.lid))break;if(!b)continue;
+   setLive('ভাবছি…','💭');const r=await voiceTurn(b);if(r&&S.live&&my===S.lid){setLive(S.gender==='female'?'👩 লোনা বলছে…':'👨 লোনা বলছে…','🔊');await speak(r,true)}
+  }catch(e){if(e&&(e.name==='NotAllowedError'||e.name==='NotFoundError')){closeLive();break}await sleep(2000)}}}
+let wake=null;
+async function openLive(){if(!CFG.apiKey){toast('আগে অ্যাডমিন প্যানেল থেকে API Key দিন');return}S.live=true;$('lv').style.display='flex';$('lu').textContent='…';
+ try{if(navigator.wakeLock)wake=await navigator.wakeLock.request('screen')}catch(e){}liveLoop()}
+function closeLive(){S.live=false;S.lid++;$('lv').style.display='none';stopSpeak();S.stopRec&&S.stopRec(false);if(wake){try{wake.release()}catch(e){}wake=null}}
+document.addEventListener('visibilitychange',()=>{if(S.live&&!document.hidden&&navigator.wakeLock)navigator.wakeLock.request('screen').then(w=>wake=w).catch(()=>{})});
+/* text send */
+async function send(text,o={}){text=(text||'').trim();if(S.busy||(!text&&!S.img))return;const im=S.img;S.img=null;$('att').style.display='none';$('inp').value='';$('inp').style.height='auto';
+ const cmd=voiceCmd(text),h=histContents();post('user',text,im&&im.url);S.busy=true;const th=thinking();let reply='',pic=null;
+ try{if(cmd)reply=cmd;else if(o.draw||imgIntent(text)){if(!CFG.enableImage)reply='ছবি আঁকার সুবিধা এখন বন্ধ আছে।';else{pic=await genImage(text);reply='🎨 আপনার জন্য ছবি তৈরি করলাম:'}}
+  else reply=await ask(text||'এই ছবিটি সম্পর্কে বলো',im&&im.url,h)}catch(e){reply=errText(e)}
+ th.remove();S.busy=false;post('a',reply,null,pic);if(S.read&&!/^⚠️/.test(reply))speak(reply)}
+/* admin */
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+let unlocked=false;const persist=()=>{try{localStorage.setItem('lona_cfg',JSON.stringify(CFG))}catch(e){}};
+function openAdmin(){$('adm').style.display='flex';$('admgate').style.display=unlocked?'none':'block';$('admform').style.display=unlocked?'block':'none';
+ $('gtxt').textContent=CFG.adminHash?'অ্যাডমিন পাসওয়ার্ড দিন':'প্রথমবার: নতুন অ্যাডমিন পাসওয়ার্ড সেট করুন (৬+ অক্ষর)';if(unlocked)fillForm()}
+function openAdminHint(){toast('অ্যাডমিন প্যানেল থেকে API Key দিন')}
+const F={name:'f_name',apiKey:'f_key',textModel:'f_tm',imageModel:'f_im',ttsModel:'f_tts',systemPrompt:'f_sys',welcome:'f_wel',banner:'f_ban',defaultVoice:'f_vg'};
+function fillForm(){for(const k in F)$(F[k]).value=CFG[k]||'';$('f_ei').checked=CFG.enableImage;$('f_et').checked=CFG.enableTTS}
+async function saveForm(){for(const k in F)CFG[k]=$(F[k]).value.trim();CFG.enableImage=$('f_ei').checked;CFG.enableTTS=$('f_et').checked;
+ if($('f_pw').value){if($('f_pw').value.length<6){toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর');return false}CFG.adminHash=await sha($('f_pw').value);$('f_pw').value=''}
+ persist();applyCfg();setGender(CFG.defaultVoice);toast('সেভ হয়েছে');return true}
+async function dl(){if(!await saveForm())return;const cl=document.documentElement.cloneNode(true);cl.querySelector('#cfg').textContent=JSON.stringify(CFG);
+ ['#msgs','#hist','#toast'].forEach(s=>cl.querySelector(s).innerHTML='');cl.querySelector('#adm').style.display='none';cl.querySelector('#lv').style.display='none';cl.querySelector('#side').classList.remove('open');cl.querySelector('#welcome').style.display='';
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['<!DOCTYPE html>\n'+cl.outerHTML],{type:'text/html'}));a.download='index.html';a.click();toast('index.html ডাউনলোড হয়েছে — হোস্টিংয়ে আপলোড করুন')}
+$('admbtn').onclick=openAdmin;$('gx').onclick=$('f_close').onclick=()=>$('adm').style.display='none';
+$('gobtn').onclick=async()=>{const p=$('gpw').value;if(!CFG.adminHash&&p.length<6){toast('কমপক্ষে ৬ অক্ষর দিন');return}const h=await sha(p);
+ if(!CFG.adminHash){CFG.adminHash=h;persist()}else if(h!==CFG.adminHash){toast('ভুল পাসওয়ার্ড');return}$('gpw').value='';unlocked=true;openAdmin()};
+$('f_save').onclick=saveForm;$('f_dl').onclick=dl;
+/* wiring */
+$('send').onclick=()=>send($('inp').value);
+$('inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send($('inp').value)}});
+$('inp').addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,140)+'px'});
+$('draw').onclick=()=>{const t=$('inp').value.trim();if(!t){toast('আগে লিখুন কী আঁকতে হবে');return}send(t,{draw:true})};
+$('deep').onclick=()=>setDeep(!S.deep);$('mic').onclick=micOnce;$('live').onclick=openLive;$('cardlive').onclick=openLive;$('lclose').onclick=closeLive;
+$('lsend').onclick=()=>S.stopRec&&S.stopRec(true);$('lint').onclick=stopSpeak;$('stop').onclick=stopSpeak;
+$('newc').onclick=()=>{newChat();$('side').classList.remove('open')};$('menu').onclick=()=>$('side').classList.toggle('open');
+$('lang').onchange=e=>S.lang=e.target.value;$('vf').onclick=()=>setGender('female',true);$('vm').onclick=()=>setGender('male',true);
+$('vt').onclick=()=>speak(S.gender==='female'?'হ্যালো! আমি লোনা এআই, মহিলা কণ্ঠে কথা বলছি।':'হ্যালো! আমি লোনা এআই, পুরুষ কণ্ঠে কথা বলছি।',true);
+$('spd').onchange=e=>S.speed=parseFloat(e.target.value);$('ra').onchange=e=>S.read=e.target.checked;
+document.querySelectorAll('.card[data-p]').forEach(c=>c.onclick=()=>{if(c.dataset.d)setDeep(true);send(c.dataset.p,{draw:!!c.dataset.i})});
+$('addp').onclick=()=>$('file').click();$('arm').onclick=()=>{S.img=null;$('att').style.display='none'};
+$('file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,720/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*k;cv.height=im.height*k;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+ S.img={url:cv.toDataURL('image/jpeg',.82)};$('athumb').src=S.img.url;$('aname').textContent=f.name;$('att').style.display='flex'};im.src=r.result};r.readAsDataURL(f);e.target.value=''};
+applyCfg();setGender(CFG.defaultVoice);load();if(location.hash==='#admin')openAdmin();
+if(!CFG.apiKey)setTimeout(()=>toast('এখনো API Key বসানো হয়নি — ⚙️ অ্যাডমিন প্যানেল খুলুন'),800);
+
+</script></body></html>
